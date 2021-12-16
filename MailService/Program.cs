@@ -24,7 +24,7 @@ namespace MailService
                 {
                     services.AddMassTransit(x =>
                     {
-                        //x.AddConsumer<>();
+                        x.AddConsumer<MailConsumer>();
 
                         //RabbitMQ
                         x.UsingRabbitMq((context, cfg) =>
@@ -39,34 +39,13 @@ namespace MailService
                             //create
                             cfg.ReceiveEndpoint("Microservice-SendMailUser", e =>
                             {
-                                //e.ConfigureConsumer<CreateOrderConsumer>(context);
+                                e.ConfigureConsumer<MailConsumer>(context);
                             });
                         });
                     });
-                    //services.AddMassTransitHostedService(true);
-                    // services.AddHostedService<Worker>();
 
-
-                    services.AddMassTransit(
-                        x=>
-                        {
-                            x.UsingRabbitMq((context, config) =>
-                            {
-                                config.Host(
-                                    "roedeer.rmq.cloudamqp.com",
-                                    "vpeeygzh",
-                                    credential =>
-                                    {
-                                        credential.Username("vpeeygzh");
-                                        credential.Password("t0mDd3KRsJkXRV3DXzmCUfRWmDFbFu42");
-                                    }
-                                );
-
-                                config.ConfigureEndpoints(context);
-
-
-                            });
-                        });
+                    services.AddMassTransitHostedService();
+                    
 
                     services.AddScoped<IMailSenderService, MailSenderService>();
                 });
