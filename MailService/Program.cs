@@ -1,3 +1,4 @@
+using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -18,7 +19,28 @@ namespace MailService
             Host.CreateDefaultBuilder(args)
                 .ConfigureServices((hostContext, services) =>
                 {
-                    // services.AddHostedService<Worker>();
+                    services.AddMassTransit(x =>
+                    {
+                        //x.AddConsumer<>();
+
+                        //RabbitMQ
+                        x.UsingRabbitMq((context, cfg) =>
+                        {
+                            cfg.Host(
+                                Environment.GetEnvironmentVariable("HOST_RABBIT"),
+                                Environment.GetEnvironmentVariable("VHOST_RABBIT"),
+                                hst => {
+                                    hst.Username(Environment.GetEnvironmentVariable("USERNAME_RABBIT"));
+                                    hst.Password(Environment.GetEnvironmentVariable("PASSWORD_RABBIT"));
+                                });
+                            //create
+                            cfg.ReceiveEndpoint("Microservice-SendMailUser", e =>
+                            {
+                                //e.ConfigureConsumer<CreateOrderConsumer>(context);
+                            });
+                        });
+                    });
+                    //services.AddMassTransitHostedService(true);
                 });
     }
 }
