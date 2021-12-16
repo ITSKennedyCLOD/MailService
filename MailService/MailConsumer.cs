@@ -21,7 +21,9 @@ namespace MailService
 
         public Task Consume(ConsumeContext<MailEvent> context)
         {
-            throw new NotImplementedException();
+            _mailService.SendMail(context.Message);
+
+            return Task.CompletedTask;
         }
     }
 }
