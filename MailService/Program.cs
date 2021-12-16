@@ -4,6 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MassTransit;
+using MailService.Interfaces;
+using MailService.Services;
 
 namespace MailService
 {
@@ -19,6 +22,30 @@ namespace MailService
                 .ConfigureServices((hostContext, services) =>
                 {
                     // services.AddHostedService<Worker>();
+
+
+                    services.AddMassTransit(
+                        x=>
+                        {
+                            x.UsingRabbitMq((context, config) =>
+                            {
+                                config.Host(
+                                    "roedeer.rmq.cloudamqp.com",
+                                    "vpeeygzh",
+                                    credential =>
+                                    {
+                                        credential.Username("vpeeygzh");
+                                        credential.Password("t0mDd3KRsJkXRV3DXzmCUfRWmDFbFu42");
+                                    }
+                                );
+
+                                config.ConfigureEndpoints(context);
+
+
+                            });
+                        });
+
+                    services.AddScoped<IMailSenderService, MailSenderService>();
                 });
     }
 }
