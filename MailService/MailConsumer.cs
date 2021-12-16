@@ -10,5 +10,6 @@ namespace MailService
 {
     public class MailConsumer : IConsumer<>
     {
+
     }
 }
